@@ -1,0 +1,4 @@
+venv/
+*.log
+EmailFinder/
+.env
