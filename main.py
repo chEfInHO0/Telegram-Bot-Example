@@ -13,7 +13,7 @@ from BlockBot.main import blockbot
 from Logs.main import setup_logger
 from datetime import datetime
 from Utils.alert import Alert
-
+from commands import *
 
 PREVENT_EXECUTION = False
 
@@ -50,64 +50,6 @@ load_dotenv()
 BOT_NAME = environ.get("BOT_NAME")
 TOKEN = environ.get("TOKEN")
 AUTH_GRANTED = environ.get("AUTH_GRANTED")
-
-
-async def template_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_name: str = update.message.chat.first_name  # Pegar o nome do usuario
-    user_lastname: str = update.message.chat.last_name  # Pegar o sobrenome do usuario
-    id = update.message.chat.id  # Pegar o ID do usuario
-    text = update.message.text  # Pegar o texto enviado pelo usuario
-    await update.message.reply_text('Template command')  # Responder o usuario
-
-
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_name: str = update.message.chat.first_name
-    user_lastname: str = update.message.chat.last_name
-    await update.message.reply_text(f'Olá {user_name}, tudo bem?')
-
-
-async def e_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    id = update.message.chat.id
-    text = update.message.text
-    if blockbot():
-        await update.message.reply_text(
-            f'por questões de segurança esse função é inativa após as 17:30 🕠'
-        )
-        command_log.info(f'User {id} enviou {text} após as 17:30')
-    else:
-        command_log.info(f'User {id} enviou {text}')
-        if str(id) in AUTH_GRANTED:
-            text = text.split('/e')[-1].strip()
-            if '@' not in text:
-                await update.message.reply_text(
-                    f'{text} não é um email'
-                )
-            else:
-                print(text)
-                pwd = get_pwd(email=text)
-                print(pwd)
-                if pwd != None:
-                    await update.message.reply_text(
-                        pwd
-                    )
-                else:
-                    await update.message.reply_text(
-                        'Email não localizado ☹'
-                    )
-        else:
-            await update.message.reply_text(
-                "Não autorizado 🤚🛑"
-            )
-
-
-async def test_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Testando"
-    )
-
-
-async def ping_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Pong')
 
 
 def handle_responses(user_id: int, text: str) -> str:
@@ -161,9 +103,8 @@ def main():
     app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler('start', start_command))
-    app.add_handler(CommandHandler('test', test_command))
     app.add_handler(CommandHandler('ping', ping_command))
-    app.add_handler(CommandHandler('e', e_command))
+    app.add_handler(CommandHandler('ping', aws_command))
 
     app.add_handler(MessageHandler(filters.TEXT,  handle_message))
 
