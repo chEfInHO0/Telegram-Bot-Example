@@ -1,3 +1,8 @@
+#
+# ⚠ THIS PROJECT IS BEING UPDATED ⚠
+#
+
+
 # Telegram Bot Example
 
 A simple example project demonstrating how to create and run a Telegram bot using Python.  
